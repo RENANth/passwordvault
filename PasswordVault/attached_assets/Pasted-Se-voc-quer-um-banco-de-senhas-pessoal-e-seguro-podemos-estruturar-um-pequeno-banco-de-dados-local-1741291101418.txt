@@ -1,0 +1,39 @@
+Se você quer um banco de senhas pessoal e seguro, podemos estruturar um pequeno banco de dados local com criptografia para garantir que apenas você tenha acesso. Aqui está um modelo simples usando SQLite e criptografia AES para armazenar suas senhas de forma segura.
+
+---
+
+### 🔐 Estrutura do Banco de Dados
+
+#### **Tabela: users (Usuários)**
+Essa tabela armazena apenas um usuário (você), com uma senha mestra que será usada para desbloquear o banco.
+
+| Campo       | Tipo          | Descrição                                      |
+|------------|-------------|----------------------------------------------|
+| id         | INTEGER (PK) | Identificador único do usuário               |
+| master_hash | TEXT        | Hash da senha mestra (com bcrypt)             |
+| created_at | DATETIME    | Data de criação do usuário                     |
+
+---
+
+#### **Tabela: passwords (Senhas)**
+Essa tabela armazena suas senhas de forma criptografada.
+
+| Campo         | Tipo         | Descrição                                      |
+|--------------|-------------|----------------------------------------------|
+| id           | INTEGER (PK) | Identificador único da senha armazenada       |
+| title        | TEXT         | Nome ou categoria da senha (ex: "Email")       |
+| username     | TEXT         | Nome de usuário usado no site/aplicação        |
+| url          | TEXT         | URL do site (se aplicável)                     |
+| password_enc | TEXT         | Senha criptografada com AES                    |
+| created_at   | DATETIME     | Data de criação                               |
+
+---
+
+### 🔒 Segurança Implementada
+- **Senha Mestra**: Apenas quem souber a senha mestra poderá acessar suas senhas.
+- **Criptografia AES-256**: Suas senhas serão criptografadas com AES para garantir sigilo total.
+- **Hash Seguro (bcrypt ou Argon2)**: A senha mestra será armazenada como hash, tornando impossível sua recuperação direta.
+
+---
+
+Você quer um código em **Go (Golang)** para gerenciar isso? Ou prefere outra linguagem para implementar essa solução? 🚀

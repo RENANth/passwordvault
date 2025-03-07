@@ -1,0 +1,136 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col">
+        <h2>Gerenciador de Senhas</h2>
+    </div>
+    <div class="col text-end">
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addPasswordModal">
+            <i data-feather="plus"></i> Nova Senha
+        </button>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Título</th>
+                        <th>Usuário</th>
+                        <th>Site</th>
+                        <th>Senha</th>
+                        <th>Criado em</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for password in passwords %}
+                    <tr>
+                        <td>{{ password.title }}</td>
+                        <td>{{ password.username }}</td>
+                        <td>
+                            {% if password.url %}
+                            <a href="{{ password.url }}" target="_blank" class="text-decoration-none">
+                                <i data-feather="external-link" class="me-1"></i>{{ password.url }}
+                            </a>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="input-group">
+                                <input type="password" class="form-control password-field" value="{{ password.password }}" readonly>
+                                <button class="btn btn-outline-secondary toggle-password" type="button" title="Mostrar/Ocultar Senha">
+                                    <i data-feather="eye"></i>
+                                </button>
+                                <button class="btn btn-outline-secondary copy-password" type="button" data-password="{{ password.password }}" title="Copiar Senha">
+                                    <i data-feather="copy"></i>
+                                </button>
+                            </div>
+                        </td>
+                        <td>{{ password.created_at.strftime('%d/%m/%Y') }}</td>
+                        <td>
+                            <form action="{{ url_for('delete_password', id=password.id) }}" method="POST" class="d-inline">
+                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Tem certeza que deseja excluir esta senha?')" title="Excluir Senha">
+                                    <i data-feather="trash-2"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Adicionar Senha -->
+<div class="modal fade" id="addPasswordModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Nova Senha</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="{{ url_for('add_password') }}" method="POST" id="addPasswordForm">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="title" class="form-label">Título</label>
+                        <input type="text" class="form-control" id="title" name="title" required placeholder="Ex: Email, Banco, Redes Sociais">
+                    </div>
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Nome de Usuário</label>
+                        <input type="text" class="form-control" id="username" name="username" required placeholder="Seu nome de usuário ou email">
+                    </div>
+                    <div class="mb-3">
+                        <label for="url" class="form-label">Site (opcional)</label>
+                        <input type="url" class="form-control" id="url" name="url" placeholder="https://exemplo.com">
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Senha</label>
+                        <div class="input-group">
+                            <input type="password" class="form-control" id="password" name="password" required>
+                            <button class="btn btn-outline-secondary toggle-new-password" type="button" title="Mostrar/Ocultar Senha">
+                                <i data-feather="eye"></i>
+                            </button>
+                            <button class="btn btn-outline-primary generate-password" type="button" title="Gerar Senha Segura">
+                                <i data-feather="key"></i>
+                            </button>
+                        </div>
+                        <div class="progress mt-2" style="height: 5px;">
+                            <div class="progress-bar" role="progressbar" style="width: 0%"></div>
+                        </div>
+                        <small class="password-feedback text-muted"></small>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i data-feather="save" class="me-1"></i>
+                        Salvar Senha
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Toast de Sucesso -->
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+    <div id="successToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header bg-success text-white">
+            <i data-feather="check-circle" class="me-2"></i>
+            <strong class="me-auto">Sucesso!</strong>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+            Operação realizada com sucesso!
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+{% endblock %}
